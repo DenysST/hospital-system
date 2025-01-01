@@ -10,7 +10,6 @@ class BaseRepository(metaclass=SingletonMeta):
         self.session = db.session
 
     def get_all(self):
-        print(self.model)
         return self.session.query(self.model).all()
 
     def get_by_id(self, id_):
@@ -56,3 +55,9 @@ class DoctorRepository(BaseRepository):
 
 class PatientRepository(BaseRepository):
     model = Patient
+
+    def get_by_ward(self, ward_id: int):
+        return self.session.query(self.model).filter_by(ward_id=ward_id).all()
+
+    def get_by_doctor(self, doctor_id: int):
+        return self.session.query(self.model).filter_by(doctor_id=doctor_id).all()

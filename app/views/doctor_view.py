@@ -29,6 +29,13 @@ def get_all_doctors():
     response = [DoctorResponseSchema.from_orm(doc).dict() for doc in doctors]
     return jsonify(response)
 
+@bp.route("/doctors/<int:doctor_id>", methods=["GET"])
+@exception_handler
+def get_doctor_by_id(doctor_id: int):
+    doctor = doctor_service.get_doctor_by_id(doctor_id)
+    response = DoctorResponseSchema.from_orm(doctor)
+    return jsonify(response.dict())
+
 @bp.route("/doctors/department/<int:department_id>", methods=["GET"])
 @exception_handler
 def get_doctors_by_department(department_id: int):

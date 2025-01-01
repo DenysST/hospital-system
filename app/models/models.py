@@ -5,6 +5,7 @@ from app import db
 
 class Department(db.Model):
     __tablename__ = 'departments'
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False, unique=True)
 
@@ -14,6 +15,7 @@ class Department(db.Model):
 
 class Ward(db.Model):
     __tablename__ = 'wards'
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     number = Column(Integer, nullable=False, unique=True)
     bed_capacity = Column(Integer, nullable=False)
@@ -25,6 +27,7 @@ class Ward(db.Model):
 
 class Doctor(db.Model):
     __tablename__ = 'doctors'
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
     specialization = Column(String(100), nullable=False)
@@ -35,13 +38,15 @@ class Doctor(db.Model):
 
 
 class Patient(db.Model):
-    __tablename__ = 'patients'
+    __tablename__ = "patients"
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
     problem = Column(Text, nullable=False)
-    planned_hospitalization_term = Column(DateTime, nullable=False)
-    ward_id = Column(Integer, ForeignKey('wards.id'), nullable=False)
-    doctor_id = Column(Integer, ForeignKey('doctors.id'), nullable=False)
+    ward_id = Column(Integer, ForeignKey("wards.id"), nullable=False)
+    doctor_id = Column(Integer, ForeignKey("doctors.id"), nullable=False)
+    start_date = Column(DateTime, nullable=True)
+    end_date = Column(DateTime, nullable=True)
 
     ward = relationship("Ward", back_populates="patients")
     doctor = relationship("Doctor", back_populates="patients")

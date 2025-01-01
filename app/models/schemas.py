@@ -1,5 +1,7 @@
+from datetime import datetime
+
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import Optional
 
 class WardCreateSchema(BaseModel):
     number: int = Field(..., ge=1, description="Ward number must be a positive integer")
@@ -23,7 +25,6 @@ class WardResponseSchema(BaseModel):
         from_attributes=True
 
 
-
 class DoctorCreateSchema(BaseModel):
     name: str = Field(..., min_length=1, max_length=100, description="Name of the doctor")
     specialization: str = Field(..., min_length=1, max_length=100, description="Specialization of the doctor")
@@ -41,6 +42,32 @@ class DoctorResponseSchema(BaseModel):
     name: str
     specialization: str
     department_id: int
+
+    class Config:
+        from_attributes=True
+
+
+class PatientCreateSchema(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100, description="Name of the patient")
+    problem: str = Field(..., min_length=1, description="Description of the patient's problem")
+
+
+class PatientUpdateSchema(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=100, description="Updated name of the patient")
+    problem: Optional[str] = Field(None, min_length=1, description="Updated problem description")
+    ward_id: Optional[int] = Field(None, ge=1, description="Updated ward ID")
+    doctor_id: Optional[int] = Field(None, ge=1, description="Updated doctor ID")
+    end_date: Optional[datetime] = None
+
+
+class PatientResponseSchema(BaseModel):
+    id: int
+    name: str
+    problem: str
+    ward_id: int
+    doctor_id: int
+    start_date: Optional[datetime]
+    end_date: Optional[datetime]
 
     class Config:
         from_attributes=True
