@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from app.services.patient_service import PatientService
 from app.models import PatientCreateSchema, PatientUpdateSchema, PatientResponseSchema
 from app.decorators import exception_handler
+from app import gemini_model
 
 bp = Blueprint("patient", __name__)
 patient_service = PatientService()
@@ -51,3 +52,10 @@ def get_patient_by_id(patient_id: int):
     patient = patient_service.get_patient_by_id(patient_id)
     response = PatientResponseSchema.from_orm(patient)
     return jsonify(response.dict())
+
+@bp.route("/patients/gemini", methods=["POST"])
+@exception_handler
+def add_gemini():
+    data = request.json
+    response = gemini_model.generate_content(data["prompt"])
+    return jsonify({'response': response.text}), 201

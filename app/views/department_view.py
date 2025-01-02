@@ -29,7 +29,7 @@ def update_department(department_id):
 @bp.route("/departments", methods=["GET"])
 @exception_handler
 def get_all_departments():
-    departments = department_service.get_all_departments()
+    departments = department_service.get_all_departments(with_relations=True)
     response = [DepartmentResponseSchema.from_orm(dep).dict() for dep in departments]
     return jsonify(response)
 
@@ -39,3 +39,10 @@ def get_department_by_id(department_id):
     department = department_service.get_department_by_id(department_id)
     response = DepartmentResponseSchema.from_orm(department)
     return jsonify(response.dict())
+
+@bp.route("/departments/occupancy", methods=["GET"])
+@exception_handler
+def get_bed_occupancy():
+    occupancy_data = department_service.calculate_bed_occupancy()
+    response = [data.dict() for data in occupancy_data]
+    return jsonify(response)

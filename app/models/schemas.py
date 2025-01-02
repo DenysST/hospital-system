@@ -84,6 +84,15 @@ class DepartmentUpdateSchema(BaseModel):
 class DepartmentResponseSchema(BaseModel):
     id: int
     name: str
+    wards: list[WardResponseSchema]
+    doctors: list[DoctorResponseSchema]
 
     class Config:
         from_attributes=True
+
+class DepartmentOccupancySchema(BaseModel):
+    department_id: int = Field(..., description="Unique identifier for the department")
+    department_name: str = Field(..., description="Name of the department")
+    total_beds: int = Field(..., ge=0, description="Total number of beds in the department")
+    occupied_beds: int = Field(..., ge=0, description="Number of beds currently occupied in the department")
+    occupancy_percentage: float = Field(..., ge=0, le=100, description="Percentage of beds occupied in the department")

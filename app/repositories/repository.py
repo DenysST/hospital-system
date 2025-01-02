@@ -1,3 +1,4 @@
+from sqlalchemy.orm import joinedload
 from app.models import Department, Ward, Doctor, Patient
 from app import db
 from app.config import SingletonMeta
@@ -35,12 +36,37 @@ class DepartmentRepository(BaseRepository):
     def get_by_name(self, name):
         return self.session.query(Department).filter_by(name=name).first()
 
+    def get_all_with_relations(self):
+        return (
+            self.session.query(Department)
+            .options(
+                joinedload(Department.wards),
+                joinedload(Department.doctors))
+            .all())
+
+    def get_by_id_with_relations(self, id_):
+        return (
+            self.session.query(Department)
+            .options(
+                joinedload(Department.wards),
+                joinedload(Department.doctors))
+            .filter_by(id=id_)
+            .first())
+
 
 class WardRepository(BaseRepository):
     model = Ward
 
     def get_by_number(self, number: int):
         return self.session.query(self.model).filter_by(number=number).first()
+
+    def get_all_with_relations(self):
+        return (
+            self.session.query(Ward)
+            .options(
+                joinedload(Ward.department),
+                joinedload(Ward.patients))
+            .all())
 
 
 class DoctorRepository(BaseRepository):

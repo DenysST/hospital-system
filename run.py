@@ -34,4 +34,4 @@ app = create_app()
 # FlaskInjector(app=app, modules=[configure])
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port=5001)
