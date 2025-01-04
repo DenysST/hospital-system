@@ -31,6 +31,7 @@ class Doctor(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
     specialization = Column(String(100), nullable=False)
+    email = Column(String(100), nullable=False)
     department_id = Column(Integer, ForeignKey('departments.id'), nullable=False)
 
     department = relationship("Department", back_populates="doctors")
@@ -45,8 +46,8 @@ class Patient(db.Model):
     problem = Column(Text, nullable=False)
     ward_id = Column(Integer, ForeignKey("wards.id"), nullable=False)
     doctor_id = Column(Integer, ForeignKey("doctors.id"), nullable=False)
-    start_date = Column(DateTime, nullable=True)
-    end_date = Column(DateTime, nullable=True)
+    hospitalisation_start_date = Column(DateTime, nullable=True)
+    hospitalisation_end_date = Column(DateTime, nullable=True)
 
     ward = relationship("Ward", back_populates="patients")
     doctor = relationship("Doctor", back_populates="patients")

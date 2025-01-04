@@ -1,0 +1,14 @@
+A patient presents with the following problem: "<patient_problem>".
+Based on the setup information provided earlier, determine the most suitable hospital department and the approximate planned hospitalization term in days.
+
+Important Instructions:
+- Do not include any additional formatting like backticks, comments, or explanations in your response.
+- Your response must be a valid JSON object, directly parsable by any JSON parser.
+- Do not format your response as a code block or include any markdown-style syntax.
+- Always validate your response to ensure it is JSON serializable before sending it.
+
+Respond with the following JSON. Do not add backticks or extra formatting:
+{
+    "department": "<department_name>",
+    "planned_hospitalization_days": <number_of_days>
+}

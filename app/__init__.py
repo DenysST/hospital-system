@@ -1,17 +1,15 @@
+import json
 import os
 from dotenv import load_dotenv
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-import google.generativeai as genai
 from app.config import Config
+from app.consts import MESSAGE
 
 load_dotenv()
 db = SQLAlchemy()
 migrate = Migrate()
-
-genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-gemini_model = genai.GenerativeModel("gemini-1.5-flash")
 
 def create_app():
     app = Flask(__name__)

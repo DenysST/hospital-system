@@ -66,8 +66,8 @@ class PatientResponseSchema(BaseModel):
     problem: str
     ward_id: int
     doctor_id: int
-    start_date: Optional[datetime]
-    end_date: Optional[datetime]
+    hospitalisation_start_date: Optional[datetime]
+    hospitalisation_end_date: Optional[datetime]
 
     class Config:
         from_attributes=True
