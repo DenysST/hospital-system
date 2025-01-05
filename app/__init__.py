@@ -1,4 +1,5 @@
-from app.config import Config
+import os
+
 from app.consts import MESSAGE
 from app.di_container import ApplicationContainer
 from app.extentions import db, migrate
@@ -16,7 +17,17 @@ def create_app():
     ])
 
     app.container = container
-    app.config.from_object(Config)
+    app.config.from_mapping(
+        SQLALCHEMY_DATABASE_URI=os.environ.get("DATABASE_URL", "postgresql://user:password@localhost:5432/hospital_db"),
+        SQLALCHEMY_TRACK_MODIFICATIONS=False,
+        MAIL_SERVER="smtp.gmail.com",
+        MAIL_PORT=587,
+        MAIL_USE_TLS=True,
+        MAIL_USERNAME=os.environ.get("MAIL_USERNAME", "denys.stefanko@gmail.com"),
+        MAIL_PASSWORD=os.environ.get("MAIL_PASSWORD", ""),
+        MAIL_DEFAULT_SENDER=os.environ.get("MAIL_DEFAULT_SENDER", "denys.stefanko@gmail.com"),
+    )
+    print(app.config)
 
     db.init_app(app)
     migrate.init_app(app, db)
