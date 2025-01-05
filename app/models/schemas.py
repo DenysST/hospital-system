@@ -42,7 +42,7 @@ class DoctorResponseSchema(BaseModel):
     name: str
     specialization: str
     department_id: int
-    email: str
+    email: Optional[str] = None
 
     class Config:
         from_attributes=True

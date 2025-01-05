@@ -18,7 +18,7 @@ def add_department(department_service: DepartmentService = Provide[ApplicationCo
     data = DepartmentCreateSchema(**request.json)
     department = department_service.add_department(data.name)
     response = DepartmentResponseSchema.model_validate(department)
-    return jsonify(response.model_dump()), 201
+    return jsonify(response.model_dump(exclude_none=True)), 201
 
 @bp.route("/departments/<int:department_id>", methods=["PUT"])
 @exception_handler
@@ -28,14 +28,14 @@ def update_department(department_id,
     data = DepartmentUpdateSchema(**request.json)
     department = department_service.update_department(department_id, data.name)
     response = DepartmentResponseSchema.model_validate(department)
-    return jsonify(response.model_dump())
+    return jsonify(response.model_dump(exclude_none=True))
 
 @bp.route("/departments", methods=["GET"])
 @exception_handler
 @inject
 def get_all_departments(department_service: DepartmentService = Provide[ApplicationContainer.department_service]):
     departments = department_service.get_all_departments(with_relations=True)
-    response = [DepartmentResponseSchema.model_validate(dep).model_dump() for dep in departments]
+    response = [DepartmentResponseSchema.model_validate(dep).model_dump(exclude_none=True) for dep in departments]
     return jsonify(response)
 
 @bp.route("/departments/<int:department_id>", methods=["GET"])
@@ -45,7 +45,7 @@ def get_department_by_id(department_id,
                          department_service: DepartmentService = Provide[ApplicationContainer.department_service]):
     department = department_service.get_department_by_id(department_id)
     response = DepartmentResponseSchema.model_validate(department)
-    return jsonify(response.model_dump())
+    return jsonify(response.model_dump(exclude_none=True))
 
 @bp.route("/departments/occupancy", methods=["GET"])
 @exception_handler

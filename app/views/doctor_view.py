@@ -15,7 +15,7 @@ def add_doctor(doctor_service: DoctorService = Provide[ApplicationContainer.doct
     data = DoctorCreateSchema(**request.json)
     doctor = doctor_service.add_doctor(data.name, data.specialization, data.department_id)
     response = DoctorResponseSchema.model_validate(doctor)
-    return jsonify(response.model_dump()), 201
+    return jsonify(response.model_dump(exclude_none=True)), 201
 
 @bp.route("/doctors/<int:doctor_id>", methods=["PUT"])
 @exception_handler
@@ -25,14 +25,14 @@ def update_doctor(doctor_id: int,
     data = DoctorUpdateSchema(**request.json)
     doctor = doctor_service.update_doctor(doctor_id, **data.model_dump(exclude_unset=True))
     response = DoctorResponseSchema.model_validate(doctor)
-    return jsonify(response.model_dump())
+    return jsonify(response.model_dump(exclude_none=True))
 
 @bp.route("/doctors", methods=["GET"])
 @exception_handler
 @inject
 def get_all_doctors(doctor_service: DoctorService = Provide[ApplicationContainer.doctor_service]):
     doctors = doctor_service.get_all_doctors()
-    response = [DoctorResponseSchema.model_validate(doc).model_dump() for doc in doctors]
+    response = [DoctorResponseSchema.model_validate(doc).model_dump(exclude_none=True) for doc in doctors]
     return jsonify(response)
 
 @bp.route("/doctors/<int:doctor_id>", methods=["GET"])
@@ -42,7 +42,7 @@ def get_doctor_by_id(doctor_id: int,
                      doctor_service: DoctorService = Provide[ApplicationContainer.doctor_service]):
     doctor = doctor_service.get_doctor_by_id(doctor_id)
     response = DoctorResponseSchema.model_validate(doctor)
-    return jsonify(response.model_dump())
+    return jsonify(response.model_dump(exclude_none=True))
 
 @bp.route("/doctors/department/<int:department_id>", methods=["GET"])
 @exception_handler
@@ -50,5 +50,5 @@ def get_doctor_by_id(doctor_id: int,
 def get_doctors_by_department(department_id: int,
                               doctor_service: DoctorService = Provide[ApplicationContainer.doctor_service]):
     doctors = doctor_service.get_doctors_by_department(department_id)
-    response = [DoctorResponseSchema.model_validate(doc).model_dump() for doc in doctors]
+    response = [DoctorResponseSchema.model_validate(doc).model_dump(exclude_none=True) for doc in doctors]
     return jsonify(response)

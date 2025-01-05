@@ -4,7 +4,7 @@ from app.repositories import PatientRepository, WardRepository, DoctorRepository
 from app.consts import DEPARTMENT, UNKNOWN_DEPARTMENT, PLANED_HOSPITALISATION_DAYS
 from app.services.ai_service import GeminiService
 from app.services.notification_service import NotificationService
-from app.consts import EMAIL_SUBJECT, EMAIL_BODY
+from app.consts import EMAIL_SUBJECT, EMAIL_BODY, WARD_ID, DOCTOR_ID
 
 
 class PatientService:
@@ -37,32 +37,24 @@ class PatientService:
         )
         created_patient = self._patient_repository.add(patient)
         self._notification_service.send_email(
-            "dinis1994@gmail.com",
+            available_doctor.email,
             EMAIL_SUBJECT,
             EMAIL_BODY.format(created_patient=created_patient, name=name, problem=problem))
         return created_patient
 
-    def update_patient(self, patient_id: int, name=None, problem=None, ward_id=None, doctor_id=None, start_date=None,
-                       end_date=None):
+    def update_patient(self, patient_id: int, **kwargs):
         patient = self._patient_repository.get_by_id(patient_id)
         if not patient:
             raise ValueError("Patient not found.")
 
-        self._validate_ward(ward_id)
-        self._validate_doctor(doctor_id, ward_id)
+        if WARD_ID in kwargs:
+            self._validate_ward(kwargs[WARD_ID])
+        if DOCTOR_ID in kwargs:
+            self._validate_doctor(kwargs[DOCTOR_ID], kwargs.get(WARD_ID))
 
-        if name is not None:
-            patient.name = name
-        if problem is not None:
-            patient.problem = problem
-        if ward_id is not None:
-            patient.ward_id = ward_id
-        if doctor_id is not None:
-            patient.doctor_id = doctor_id
-        if start_date is not None:
-            patient.hospitalisation_start_date = start_date
-        if end_date is not None:
-            patient.hospitalisation_end_date = end_date
+        for key, value in kwargs.items():
+            if hasattr(patient, key):
+                setattr(patient, key, value)
 
         return self._patient_repository.update(patient)
 

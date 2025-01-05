@@ -1,6 +1,7 @@
 from app.models import Doctor
 from app.repositories import DoctorRepository
 from app.repositories import DepartmentRepository
+from app.consts import DEPARTMENT_ID
 
 
 class DoctorService:
@@ -16,22 +17,20 @@ class DoctorService:
         doctor = Doctor(name=name, specialization=specialization, department_id=department_id)
         return self._doctor_repository.add(doctor)
 
-    def update_doctor(self, doctor_id: int, name: str = None, specialization: str = None, department_id: int = None):
+    def update_doctor(self, doctor_id: int, **kwargs):
         doctor = self._doctor_repository.get_by_id(doctor_id)
         if not doctor:
             raise ValueError("Doctor not found.")
 
-        if department_id is not None:
-            department = self._department_repository.get_by_id(department_id)
+        if DEPARTMENT_ID in kwargs:
+            department = self._department_repository.get_by_id(kwargs[DEPARTMENT_ID])
             if not department:
                 raise ValueError("Department does not exist.")
+            doctor.department_id = kwargs[DEPARTMENT_ID]
 
-        if name is not None:
-            doctor.name = name
-        if specialization is not None:
-            doctor.specialization = specialization
-        if department_id is not None:
-            doctor.department_id = department_id
+        for key, value in kwargs.items():
+            if hasattr(doctor, key) and key != DEPARTMENT_ID:
+                setattr(doctor, key, value)
 
         return self._doctor_repository.update(doctor)
 
