@@ -8,5 +8,5 @@ class Config:
     MAIL_PORT = 587
     MAIL_USE_TLS = True
     MAIL_USERNAME = "denys.stefanko@gmail.com"  # Replace with your email
-    MAIL_PASSWORD = "ldoz hkrh clea tsvb"
+    MAIL_PASSWORD = ""
     MAIL_DEFAULT_SENDER = "denys.stefanko@gmail.com"
