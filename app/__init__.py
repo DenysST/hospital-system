@@ -1,7 +1,5 @@
 import os
-
 from app.consts import MESSAGE
-from app.di_container import ApplicationContainer
 from app.extentions import db, migrate
 from app.di_container import ApplicationContainer
 
@@ -27,7 +25,6 @@ def create_app():
         MAIL_PASSWORD=os.environ.get("MAIL_PASSWORD", ""),
         MAIL_DEFAULT_SENDER=os.environ.get("MAIL_DEFAULT_SENDER", "denys.stefanko@gmail.com"),
     )
-    print(app.config)
 
     db.init_app(app)
     migrate.init_app(app, db)
