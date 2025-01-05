@@ -1,20 +1,22 @@
 from datetime import datetime, timedelta
-from app.config import SingletonMeta
 from app.models import Patient
 from app.repositories import PatientRepository, WardRepository, DoctorRepository, DepartmentRepository
 from app.consts import DEPARTMENT, UNKNOWN_DEPARTMENT, PLANED_HOSPITALISATION_DAYS
 from app.services.ai_service import GeminiService
 from app.services.notification_service import NotificationService
-from run import notification_service
+from app.consts import EMAIL_SUBJECT, EMAIL_BODY
 
-class PatientService(metaclass=SingletonMeta):
-    def __init__(self):
-        self._patient_repository = PatientRepository()
-        self._ward_repository = WardRepository()
-        self._doctor_repository = DoctorRepository()
-        self._department_repository = DepartmentRepository()
-        self._gemini_service = GeminiService()
-        self._notification_service: NotificationService = notification_service
+
+class PatientService:
+    def __init__(self, patient_repository: PatientRepository, ward_repository: WardRepository,
+                 doctor_repository: DoctorRepository, department_repository: DepartmentRepository,
+                 gemini_service: GeminiService, notification_service: NotificationService):
+        self._patient_repository = patient_repository
+        self._ward_repository = ward_repository
+        self._doctor_repository = doctor_repository
+        self._department_repository = department_repository
+        self._gemini_service = gemini_service
+        self._notification_service = notification_service
 
 
     def add_patient(self, name: str, problem: str):
@@ -35,10 +37,9 @@ class PatientService(metaclass=SingletonMeta):
         )
         created_patient = self._patient_repository.add(patient)
         self._notification_service.send_email(
-            created_patient.doctor.email,
-            "New Patient Assigned",
-            f"Dear {created_patient.doctor.name},\n\nYou have been assigned a new patient:\n"
-            f"Name: {name}\nProblem: {problem}\n\nBest regards,\nHospital Management System")
+            "dinis1994@gmail.com",
+            EMAIL_SUBJECT,
+            EMAIL_BODY.format(created_patient=created_patient, name=name, problem=problem))
         return created_patient
 
     def update_patient(self, patient_id: int, name=None, problem=None, ward_id=None, doctor_id=None, start_date=None,

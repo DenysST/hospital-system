@@ -1,13 +1,12 @@
-from app.config import SingletonMeta
 from app.models import Doctor
 from app.repositories import DoctorRepository
 from app.repositories import DepartmentRepository
 
 
-class DoctorService(metaclass=SingletonMeta):
-    def __init__(self):
-        self._doctor_repository = DoctorRepository()
-        self._department_repository = DepartmentRepository()
+class DoctorService:
+    def __init__(self, doctor_repository: DoctorRepository, department_repository: DepartmentRepository):
+        self._doctor_repository = doctor_repository
+        self._department_repository = department_repository
 
     def add_doctor(self, name: str, specialization: str, department_id: int):
         department = self._department_repository.get_by_id(department_id)

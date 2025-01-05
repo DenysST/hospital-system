@@ -1,18 +1,21 @@
-import json
-import os
-from dotenv import load_dotenv
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from app.config import Config
 from app.consts import MESSAGE
+from app.di_container import ApplicationContainer
+from app.extentions import db, migrate
+from app.di_container import ApplicationContainer
 
-load_dotenv()
-db = SQLAlchemy()
-migrate = Migrate()
 
 def create_app():
-    app = Flask(__name__)
+    container = ApplicationContainer()
+    app = container.app()
+    container.wire(modules=[
+        "app.views.department_view",
+        "app.views.ward_view",
+        "app.views.doctor_view",
+        "app.views.patients_view",
+    ])
+
+    app.container = container
     app.config.from_object(Config)
 
     db.init_app(app)

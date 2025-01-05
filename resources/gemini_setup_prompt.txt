@@ -13,24 +13,17 @@ Setup Information:
        "planned_hospitalization_days": <number_of_days_or_null>
    }
 
+Example Scenarios:
+- Problem: "Severe chest pain" → Response: { "department": "Cardiology", "planned_hospitalization_days": 7 }
+- Problem: "Memory loss" → Response: { "department": "Neurology", "planned_hospitalization_days": 14 }
+- Problem: "Unknown issue" → Response: { "department": "unknown_department", "planned_hospitalization_days": null }
+
 Important Instructions:
 - Do not include any additional formatting like backticks, comments, or explanations in your response.
 - Your response must be a valid JSON object, directly parsable by any JSON parser.
 - Do not format your response as a code block or include any markdown-style syntax.
 - Always validate your response to ensure it is JSON serializable before sending it.
-
-Available Departments:
-- Cardiology
-- Neurology
-- Pediatrics
-- Oncology
-- Gastroenterology
-- General Medicine
-
-Example Scenarios:
-- Problem: "Severe chest pain" → Response: { "department": "Cardiology", "planned_hospitalization_days": 7 }
-- Problem: "Memory loss" → Response: { "department": "Neurology", "planned_hospitalization_days": 14 }
-- Problem: "Unknown issue" → Response: { "department": "unknown_department", "planned_hospitalization_days": null }
+- You must choose a department **only** from the provided list. Predictions outside this list are not allowed and must default to "General Medicine".
 
 Validation Test:
 If you understand the task, respond with the following JSON. Do not add backticks or extra formatting:

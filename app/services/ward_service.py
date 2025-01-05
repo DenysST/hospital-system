@@ -1,13 +1,12 @@
-from app.config import SingletonMeta
 from app.repositories import WardRepository
 from app.repositories import DepartmentRepository
 from app.models import Ward
 
 
-class WardService(metaclass=SingletonMeta):
-    def __init__(self):
-        self._ward_repository = WardRepository()
-        self._department_repository = DepartmentRepository()
+class WardService:
+    def __init__(self, ward_repository: WardRepository, department_repository: DepartmentRepository):
+        self._ward_repository = ward_repository
+        self._department_repository = department_repository
 
     def add_ward(self, number: int, bed_capacity: int, department_id: int):
         department = self._department_repository.get_by_id(department_id)

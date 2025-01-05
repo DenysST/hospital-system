@@ -1,7 +1,7 @@
 from datetime import datetime
-
 from pydantic import BaseModel, Field
 from typing import Optional
+
 
 class WardCreateSchema(BaseModel):
     number: int = Field(..., ge=1, description="Ward number must be a positive integer")
@@ -42,6 +42,7 @@ class DoctorResponseSchema(BaseModel):
     name: str
     specialization: str
     department_id: int
+    email: str
 
     class Config:
         from_attributes=True

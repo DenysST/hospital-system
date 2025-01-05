@@ -1,7 +1,16 @@
 A patient presents with the following problem: "<patient_problem>".
 Based on the setup information provided earlier, determine the most suitable hospital department and the approximate planned hospitalization term in days.
 
+Available Departments:
+- Cardiology
+- Neurology
+- Pediatrics
+- Oncology
+- Gastroenterology
+- General Medicine
+
 Important Instructions:
+- You must choose a department **only** from the provided list of Available Departments. Predictions outside this list are not allowed and must default to "General Medicine".
 - Do not include any additional formatting like backticks, comments, or explanations in your response.
 - Your response must be a valid JSON object, directly parsable by any JSON parser.
 - Do not format your response as a code block or include any markdown-style syntax.

@@ -1,11 +1,10 @@
-from app.config import SingletonMeta
 from app.models import Department, DepartmentOccupancySchema
 from app.repositories import DepartmentRepository
 
 
-class DepartmentService(metaclass=SingletonMeta):
-    def __init__(self):
-        self._repository = DepartmentRepository()
+class DepartmentService:
+    def __init__(self, department_repository: DepartmentRepository):
+        self._repository = department_repository
 
     def add_department(self, name: str):
         if self._repository.get_by_name(name):
