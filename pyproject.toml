@@ -4,6 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["denys-stefanko <partner.denys.stefanko@philips.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
@@ -23,9 +24,8 @@ google-auth-oauthlib = "^1.2.1"
 google-auth-httplib2 = "^0.2.0"
 google-api-python-client = "^2.157.0"
 pytest-mock = "^3.14.0"
-
-[tool.poetry.dev-dependencies]
 pytest = "^8.3.4"
+pytest-cov = "^6.0.0"
 
 
 [build-system]
