@@ -52,3 +52,60 @@ class WardService:
         if not ward:
             raise ValueError("Ward not found.")
         return ward
+
+    def get_wards_by_department(self, department_id: int):
+        """
+        Retrieve all wards for a given department.
+        """
+        department = self._department_repository.get_by_id(department_id)
+        if not department:
+            raise ValueError("Department not found.")
+
+        return self._ward_repository.get_by_id(department_id)
+
+    def calculate_occupancy_percentage(self, ward_id: int) -> float:
+        """
+        Calculate the occupancy percentage of a ward.
+        """
+        ward = self._ward_repository.get_by_id(ward_id)
+        if not ward:
+            raise ValueError("Ward not found.")
+
+        if ward.total_beds == 0:
+            return 0.0
+
+        return (ward.occupied_beds / ward.total_beds) * 100
+
+    def summarize_wards(self, department_id: int) -> dict:
+        """
+        Summarize ward data for a department.
+        """
+        department = self._department_repository.get_by_id(department_id)
+        if not department:
+            raise ValueError("Department not found.")
+
+        wards = self._ward_repository.get_by_id(department_id)
+        return {
+            "total_wards": len(wards),
+            "total_beds": sum(ward.total_beds for ward in wards),
+            "total_occupied": sum(ward.occupied_beds for ward in wards),
+            "average_occupancy": (
+                sum(ward.occupied_beds for ward in wards) / sum(ward.total_beds for ward in wards)
+                if wards else 0.0
+            ),
+        }
+
+    def delete_ward(self, ward_id: int):
+        """
+        Delete a ward and handle errors.
+        """
+        try:
+            ward = self._ward_repository.get_by_id(ward_id)
+            if not ward:
+                raise ValueError("Ward not found.")
+
+            self._ward_repository.delete(ward)
+        except ValueError as e:
+            print(f"Error deleting ward: {str(e)}")
+        except Exception as e:
+            print(f"Unexpected error: {str(e)}")
