@@ -27,6 +27,8 @@ pytest-mock = "^3.14.0"
 pytest = "^8.3.4"
 pytest-cov = "^6.0.0"
 flask-script = "^2.0.6"
+flask-smorest = "^0.45.0"
+marshmallow = "^3.25.1"
 
 
 [build-system]

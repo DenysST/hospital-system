@@ -1,64 +1,53 @@
+from flask_smorest import Blueprint
 from dependency_injector.wiring import Provide, inject
-from flask import Blueprint, request, jsonify
 from app import ApplicationContainer
 from app.services.patient_service import PatientService
-from app.models import PatientCreateSchema, PatientUpdateSchema, PatientResponseSchema
+from app.models.schemas import PatientCreateSchema, PatientUpdateSchema, PatientResponseSchema
 from app.decorators import exception_handler
 
-bp = Blueprint("patient", __name__)
+bp = Blueprint("patient", "patient", url_prefix="/patients")
 
-@bp.route("/patients", methods=["POST"])
+@bp.route("/", methods=["POST"])
+@bp.arguments(PatientCreateSchema)
+@bp.response(201, PatientResponseSchema)
 @exception_handler
 @inject
-def add_patient(patient_service: PatientService = Provide[ApplicationContainer.patient_service]):
-    data = PatientCreateSchema(**request.json)
-    patient = patient_service.add_patient(data.name, data.problem)
-    response = PatientResponseSchema.model_validate(patient)
-    return jsonify(response.model_dump(exclude_none=True)), 201
+def add_patient(data, patient_service: PatientService = Provide[ApplicationContainer.patient_service]):
+    patient = PatientCreateSchema(**data)
+    return patient_service.add_patient(patient.name, patient.problem)
 
-@bp.route("/patients/<int:patient_id>", methods=["PUT"])
+@bp.route("/<int:patient_id>", methods=["PUT"])
+@bp.arguments(PatientUpdateSchema)
+@bp.response(200, PatientResponseSchema)
 @exception_handler
 @inject
-def update_patient(patient_id: int,
-                   patient_service: PatientService = Provide[ApplicationContainer.patient_service]):
-    data = PatientUpdateSchema(**request.json)
-    patient = patient_service.update_patient(
-        patient_id, **data.model_dump(exclude_none=True)
-    )
-    response = PatientResponseSchema.model_validate(patient)
-    return jsonify(response.model_dump(exclude_none=True))
+def update_patient(data, patient_id, patient_service: PatientService = Provide[ApplicationContainer.patient_service]):
+    return patient_service.update_patient(patient_id, **data)
 
-@bp.route("/patients", methods=["GET"])
+@bp.route("/", methods=["GET"])
+@bp.response(200, PatientResponseSchema(many=True))
 @exception_handler
 @inject
 def get_all_patients(patient_service: PatientService = Provide[ApplicationContainer.patient_service]):
-    patients = patient_service.get_all_patients()
-    response = [PatientResponseSchema.model_validate(p).model_dump(exclude_none=True) for p in patients]
-    return jsonify(response)
+    return patient_service.get_all_patients()
 
-@bp.route("/patients/ward/<int:ward_id>", methods=["GET"])
+@bp.route("/ward/<int:ward_id>", methods=["GET"])
+@bp.response(200, PatientResponseSchema(many=True))
 @exception_handler
 @inject
-def get_patients_by_ward(ward_id: int,
-                         patient_service: PatientService = Provide[ApplicationContainer.patient_service]):
-    patients = patient_service.get_patients_by_ward(ward_id)
-    response = [PatientResponseSchema.model_validate(p).model_dump(exclude_none=True) for p in patients]
-    return jsonify(response)
+def get_patients_by_ward(ward_id, patient_service: PatientService = Provide[ApplicationContainer.patient_service]):
+    return patient_service.get_patients_by_ward(ward_id)
 
-@bp.route("/patients/doctor/<int:doctor_id>", methods=["GET"])
+@bp.route("/doctor/<int:doctor_id>", methods=["GET"])
+@bp.response(200, PatientResponseSchema(many=True))
 @exception_handler
 @inject
-def get_patients_by_doctor(doctor_id: int,
-                           patient_service: PatientService = Provide[ApplicationContainer.patient_service]):
-    patients = patient_service.get_patients_by_doctor(doctor_id)
-    response = [PatientResponseSchema.model_validate(p).model_dump(exclude_none=True) for p in patients]
-    return jsonify(response)
+def get_patients_by_doctor(doctor_id, patient_service: PatientService = Provide[ApplicationContainer.patient_service]):
+    return patient_service.get_patients_by_doctor(doctor_id)
 
-@bp.route("/patients/<int:patient_id>", methods=["GET"])
+@bp.route("/<int:patient_id>", methods=["GET"])
+@bp.response(200, PatientResponseSchema)
 @exception_handler
 @inject
-def get_patient_by_id(patient_id: int,
-                      patient_service: PatientService = Provide[ApplicationContainer.patient_service]):
-    patient = patient_service.get_patient_by_id(patient_id)
-    response = PatientResponseSchema.model_validate(patient)
-    return jsonify(response.model_dump(exclude_none=True))
+def get_patient_by_id(patient_id, patient_service: PatientService = Provide[ApplicationContainer.patient_service]):
+    return patient_service.get_patient_by_id(patient_id)

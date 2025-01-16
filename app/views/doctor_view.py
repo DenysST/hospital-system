@@ -1,54 +1,47 @@
+from flask_smorest import Blueprint
 from dependency_injector.wiring import Provide, inject
-from flask import Blueprint, request, jsonify
-
 from app import ApplicationContainer
 from app.services.doctor_service import DoctorService
-from app.models import DoctorCreateSchema, DoctorUpdateSchema, DoctorResponseSchema
+from app.models.schemas import DoctorCreateSchema, DoctorUpdateSchema, DoctorResponseSchema
 from app.decorators import exception_handler
 
-bp = Blueprint("doctor", __name__)
+bp = Blueprint("doctor", "doctor", url_prefix="/doctors")
 
-@bp.route("/doctors", methods=["POST"])
+@bp.route("/", methods=["POST"])
+@bp.arguments(DoctorCreateSchema)
+@bp.response(201, DoctorResponseSchema)
 @exception_handler
 @inject
-def add_doctor(doctor_service: DoctorService = Provide[ApplicationContainer.doctor_service]):
-    data = DoctorCreateSchema(**request.json)
-    doctor = doctor_service.add_doctor(data.name, data.specialization, data.department_id)
-    response = DoctorResponseSchema.model_validate(doctor)
-    return jsonify(response.model_dump(exclude_none=True)), 201
+def add_doctor(data, doctor_service: DoctorService = Provide[ApplicationContainer.doctor_service]):
+    doctor = DoctorResponseSchema(**data)
+    return doctor_service.add_doctor(doctor.name, doctor.specialization, doctor.department_id)
 
-@bp.route("/doctors/<int:doctor_id>", methods=["PUT"])
+@bp.route("/<int:doctor_id>", methods=["PUT"])
+@bp.arguments(DoctorUpdateSchema)
+@bp.response(200, DoctorResponseSchema)
 @exception_handler
 @inject
-def update_doctor(doctor_id: int,
-                  doctor_service: DoctorService = Provide[ApplicationContainer.doctor_service]):
-    data = DoctorUpdateSchema(**request.json)
-    doctor = doctor_service.update_doctor(doctor_id, **data.model_dump(exclude_unset=True))
-    response = DoctorResponseSchema.model_validate(doctor)
-    return jsonify(response.model_dump(exclude_none=True))
+def update_doctor(data, doctor_id, doctor_service: DoctorService = Provide[ApplicationContainer.doctor_service]):
+    return doctor_service.update_doctor(doctor_id, **data)
 
-@bp.route("/doctors", methods=["GET"])
+@bp.route("/", methods=["GET"])
+@bp.response(200, DoctorResponseSchema(many=True))
 @exception_handler
 @inject
 def get_all_doctors(doctor_service: DoctorService = Provide[ApplicationContainer.doctor_service]):
-    doctors = doctor_service.get_all_doctors()
-    response = [DoctorResponseSchema.model_validate(doc).model_dump(exclude_none=True) for doc in doctors]
-    return jsonify(response)
+    return doctor_service.get_all_doctors()
 
-@bp.route("/doctors/<int:doctor_id>", methods=["GET"])
+@bp.route("/<int:doctor_id>", methods=["GET"])
+@bp.response(200, DoctorResponseSchema)
 @exception_handler
 @inject
-def get_doctor_by_id(doctor_id: int,
-                     doctor_service: DoctorService = Provide[ApplicationContainer.doctor_service]):
-    doctor = doctor_service.get_doctor_by_id(doctor_id)
-    response = DoctorResponseSchema.model_validate(doctor)
-    return jsonify(response.model_dump(exclude_none=True))
+def get_doctor_by_id(doctor_id, doctor_service: DoctorService = Provide[ApplicationContainer.doctor_service]):
+    return doctor_service.get_doctor_by_id(doctor_id)
 
-@bp.route("/doctors/department/<int:department_id>", methods=["GET"])
+@bp.route("/department/<int:department_id>", methods=["GET"])
+@bp.response(200, DoctorResponseSchema(many=True))
 @exception_handler
 @inject
-def get_doctors_by_department(department_id: int,
+def get_doctors_by_department(department_id,
                               doctor_service: DoctorService = Provide[ApplicationContainer.doctor_service]):
-    doctors = doctor_service.get_doctors_by_department(department_id)
-    response = [DoctorResponseSchema.model_validate(doc).model_dump(exclude_none=True) for doc in doctors]
-    return jsonify(response)
+    return doctor_service.get_doctors_by_department(department_id)
