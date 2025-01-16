@@ -30,4 +30,4 @@ jobs:
         push: true
         tags: |
           denny0304/hospital-system:latest
-          denny0304/hospital-system:${{ github.ref_name }}
+          denny0304/hospital-system:${{ github.sha }}
