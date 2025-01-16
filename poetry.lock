@@ -448,6 +448,19 @@ dev = ["flake8", "pytest", "tox"]
 docs = ["sphinx"]
 
 [[package]]
+name = "flask-script"
+version = "2.0.6"
+description = "Scripting support for Flask"
+optional = false
+python-versions = "*"
+files = [
+    {file = "Flask-Script-2.0.6.tar.gz", hash = "sha256:6425963d91054cfcc185807141c7314a9c5ad46325911bd24dcb489bd0161c65"},
+]
+
+[package.dependencies]
+Flask = "*"
+
+[[package]]
 name = "flask-sqlalchemy"
 version = "3.1.1"
 description = "Add SQLAlchemy support to your Flask application."
@@ -1787,4 +1800,4 @@ dkim = ["dkimpy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "dbd521bbd37e55a45c93ecbdaef656803bf38250f7e6838b1a9810e5dc22e420"
+content-hash = "2f41662997bfab5c096b61cd17659086bb3c32421a6423c3b17c1e43e6f84ab2"

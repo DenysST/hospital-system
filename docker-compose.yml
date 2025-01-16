@@ -1,12 +1,17 @@
 version: "3.9"
 services:
   hospital-system:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "5000:5000"
     environment:
-      FLASK_ENV: development
-      DATABASE_URL: postgresql://user:password@db:5432/hospital_db
+      FLASK_ENV: "development"
+      DATABASE_URL: "postgresql://user:password@db:5432/hospital_db"
+      MAIL_USERNAME: "${MAIL_USERNAME}"
+      MAIL_PASSWORD: "${MAIL_PASSWORD}"
+      MAIL_DEFAULT_SENDER: "${MAIL_DEFAULT_SENDER}"
     depends_on:
       - db
   db:
@@ -17,3 +22,9 @@ services:
       POSTGRES_DB: hospital_db
     ports:
       - "5432:5432"
+    volumes:
+      - ./resources/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
