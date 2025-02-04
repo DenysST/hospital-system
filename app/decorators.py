@@ -1,7 +1,6 @@
 from functools import wraps
 from flask import jsonify
-from pydantic import ValidationError
-from app.exceptions import GeminiException
+
 
 def exception_handler(view_func):
     @wraps(view_func)

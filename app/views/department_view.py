@@ -11,7 +11,7 @@ from app.di_container import ApplicationContainer
 
 bp = Blueprint("department", "department", url_prefix="/departments")
 
-@bp.route("/", methods=["POST"])
+@bp.route("", methods=["POST"])
 @bp.arguments(DepartmentCreateSchema)
 @bp.response(201, DepartmentResponseSchema)
 @exception_handler
@@ -19,8 +19,7 @@ bp = Blueprint("department", "department", url_prefix="/departments")
 def add_department(
         data, department_service: DepartmentService = Provide[ApplicationContainer.department_service]
 ):
-    department_schema = DepartmentCreateSchema(**data)
-    department = department_service.add_department(department_schema.name)
+    department = department_service.add_department(**data)
     return DepartmentResponseSchema().dump(department)
 
 @bp.route("/<int:department_id>", methods=["PUT"])
@@ -32,17 +31,16 @@ def update_department(
         data, department_id,
         department_service: DepartmentService = Provide[ApplicationContainer.department_service]
 ):
-    department_schema = DepartmentUpdateSchema(**data)
-    department = department_service.update_department(department_id, department_schema.name)
-    return DepartmentResponseSchema().dump(department)
+    validated_data = DepartmentUpdateSchema().load(data)
+    department = department_service.update_department(department_id, validated_data["name"])
+    return department
 
-@bp.route("/", methods=["GET"])
+@bp.route("", methods=["GET"])
 @bp.response(200, DepartmentResponseSchema(many=True))
 @exception_handler
 @inject
 def get_all_departments(department_service: DepartmentService = Provide[ApplicationContainer.department_service]):
-    departments = department_service.get_all_departments(with_relations=True)
-    return DepartmentResponseSchema(many=True).dump(departments)
+    return department_service.get_all_departments(with_relations=True)
 
 @bp.route("/<int:department_id>", methods=["GET"])
 @bp.response(200, DepartmentResponseSchema)
@@ -52,13 +50,11 @@ def get_department_by_id(
         department_id,
         department_service: DepartmentService = Provide[ApplicationContainer.department_service]
 ):
-    department = department_service.get_department_by_id(department_id)
-    return DepartmentResponseSchema().dump(department)
+    return department_service.get_department_by_id(department_id)
 
 @bp.route("/occupancy", methods=["GET"])
 @bp.response(200, DepartmentResponseSchema(many=True))
 @exception_handler
 @inject
 def get_bed_occupancy(department_service: DepartmentService = Provide[ApplicationContainer.department_service]):
-    occupancy_data = department_service.calculate_bed_occupancy()
-    return DepartmentResponseSchema(many=True).dump(occupancy_data)
+    return department_service.calculate_bed_occupancy()

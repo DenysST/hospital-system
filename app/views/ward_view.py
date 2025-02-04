@@ -7,14 +7,13 @@ from app.decorators import exception_handler
 
 bp = Blueprint("ward", "ward", url_prefix="/wards")
 
-@bp.route("/", methods=["POST"])
+@bp.route("", methods=["POST"])
 @bp.arguments(WardCreateSchema)
 @bp.response(201, WardResponseSchema)
 @exception_handler
 @inject
 def add_ward(data, ward_service: WardService = Provide[ApplicationContainer.ward_service]):
-    ward = WardCreateSchema(**data)
-    return ward_service.add_ward(ward.number, ward.bed_capacity, ward.department_id)
+    return ward_service.add_ward(**data)
 
 @bp.route("/<int:ward_id>", methods=["PUT"])
 @bp.arguments(WardUpdateSchema)
@@ -24,7 +23,7 @@ def add_ward(data, ward_service: WardService = Provide[ApplicationContainer.ward
 def update_ward(data, ward_id, ward_service: WardService = Provide[ApplicationContainer.ward_service]):
     return ward_service.update_ward(ward_id, **data)
 
-@bp.route("/", methods=["GET"])
+@bp.route("", methods=["GET"])
 @bp.response(200, WardResponseSchema(many=True))
 @exception_handler
 @inject

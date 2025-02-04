@@ -22,7 +22,7 @@ def test_add_ward(client, app):
 
     with app.container.ward_service.override(ward_service_mock):
         response = client.post(
-            "/api/wards",
+            "/wards",
             json={"number": 101, "bed_capacity": 20, "department_id": 2},
         )
 
@@ -33,7 +33,7 @@ def test_add_ward(client, app):
         "bed_capacity": 20,
         "department_id": 2,
     }
-    ward_service_mock.add_ward.assert_called_once_with(101, 20, 2)
+    ward_service_mock.add_ward.assert_called_once_with(number=101, bed_capacity=20, department_id=2)
 
 def test_update_ward(client, app):
     mock_ward = Ward(id=1, number=101, bed_capacity=25, department_id=2)
@@ -42,7 +42,7 @@ def test_update_ward(client, app):
 
     with app.container.ward_service.override(ward_service_mock):
         response = client.put(
-            "/api/wards/1",
+            "/wards/1",
             json={"bed_capacity": 25},
         )
 
@@ -64,7 +64,7 @@ def test_get_all_wards(client, app):
     ward_service_mock.get_all_wards.return_value = mock_wards
 
     with app.container.ward_service.override(ward_service_mock):
-        response = client.get("/api/wards")
+        response = client.get("/wards")
 
     assert response.status_code == 200
     assert response.json == [
@@ -79,7 +79,7 @@ def test_get_ward_by_id(client, app):
     ward_service_mock.get_ward_by_id.return_value = mock_ward
 
     with app.container.ward_service.override(ward_service_mock):
-        response = client.get("/api/wards/1")
+        response = client.get("/wards/1")
 
     assert response.status_code == 200
     assert response.json == {

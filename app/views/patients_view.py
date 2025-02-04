@@ -7,14 +7,13 @@ from app.decorators import exception_handler
 
 bp = Blueprint("patient", "patient", url_prefix="/patients")
 
-@bp.route("/", methods=["POST"])
+@bp.route("", methods=["POST"])
 @bp.arguments(PatientCreateSchema)
 @bp.response(201, PatientResponseSchema)
 @exception_handler
 @inject
 def add_patient(data, patient_service: PatientService = Provide[ApplicationContainer.patient_service]):
-    patient = PatientCreateSchema(**data)
-    return patient_service.add_patient(patient.name, patient.problem)
+    return patient_service.add_patient(**data)
 
 @bp.route("/<int:patient_id>", methods=["PUT"])
 @bp.arguments(PatientUpdateSchema)
@@ -24,7 +23,7 @@ def add_patient(data, patient_service: PatientService = Provide[ApplicationConta
 def update_patient(data, patient_id, patient_service: PatientService = Provide[ApplicationContainer.patient_service]):
     return patient_service.update_patient(patient_id, **data)
 
-@bp.route("/", methods=["GET"])
+@bp.route("", methods=["GET"])
 @bp.response(200, PatientResponseSchema(many=True))
 @exception_handler
 @inject

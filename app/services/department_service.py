@@ -45,11 +45,13 @@ class DepartmentService:
             occupied_beds = sum(len(ward.patients) for ward in department.wards)
             occupancy_percentage = (occupied_beds / total_beds * 100) if total_beds > 0 else 0
             occupancy_data.append(
-                DepartmentOccupancySchema(
-                    department_id=department.id,
-                    department_name=department.name,
-                    total_beds=total_beds,
-                    occupied_beds=occupied_beds,
-                    occupancy_percentage=round(occupancy_percentage, 2)))
+                DepartmentOccupancySchema().load({
+                    "department_id": department.id,
+                    "department_name": department.name,
+                    "total_beds": total_beds,
+                    "occupied_beds": occupied_beds,
+                    "occupancy_percentage": round(occupancy_percentage, 2)
+                })
+            )
 
         return occupancy_data

@@ -106,9 +106,9 @@ def test_calculate_bed_occupancy(service, mock_repository):
     occupancy_data = service.calculate_bed_occupancy()
 
     assert len(occupancy_data) == 1
-    assert occupancy_data[0].department_id == 1
-    assert occupancy_data[0].department_name == "Cardiology"
-    assert occupancy_data[0].total_beds == 15
-    assert occupancy_data[0].occupied_beds == 10
-    assert occupancy_data[0].occupancy_percentage == 66.67
+    assert occupancy_data[0]['department_id'] == 1
+    assert occupancy_data[0]['department_name'] == "Cardiology"
+    assert occupancy_data[0]['total_beds'] == 15
+    assert occupancy_data[0]['occupied_beds'] == 10
+    assert occupancy_data[0]["occupancy_percentage"] == 66.67
     mock_repository.get_all_with_relations.assert_called_once()
